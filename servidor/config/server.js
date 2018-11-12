@@ -22,6 +22,7 @@ app.use(express.static('./app/public'));
 
 /* configurar o middleware body-parser */
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 /* configurar o middleware express-validator */
 app.use(expressValidator());
@@ -32,6 +33,18 @@ consign()
 	.then('app/models')
 	.then('app/controllers')
 	.into(app);
+
+/* midleware que configura pagina de status */
+app.use(function(req, res, next) {
+	res.status(404).render('erros/404');
+	next();
+});
+
+/* midleware que configura msg de erros internos */
+app.use(function(erro, req, res, next) {
+	res.status(500).render('erros/500', {erro: erro});
+	next();
+});
 
 /* exportar o objeto app */
 module.exports = app;
